@@ -10,6 +10,7 @@ Each service folder has its own `CLAUDE.md` covering service-specific rules (Pyt
 - Always-on **service-specific** rules live in each service's `CLAUDE.md` (e.g. `../ums-watchkeeper-sentinel/CLAUDE.md`).
 - Operational workflows (start a spec, finish a PR, log a decision) live in the project skills at `.claude/skills/`. Invoke them rather than asking Claude to remember the steps.
 - When a rule and a skill say different things, the skill wins for that workflow — then update this file to match.
+- The **canonical index of standing conventions** (spec layout, ADR format, changelog rules, …) is the *Documentation & Process Conventions* section below — each points to its ADR/skill for the detail.
 
 ## Workspace layout
 ```
@@ -34,11 +35,11 @@ SPIKE / R&D PHASE       — invoke `/ums-brainstorm <topic>`
    - Research packages, hardware behavior, known gotchas
    - Output: soul/HARDWARE_NOTES.md addition and/or proposed ADR (in the relevant repo)
    ↓
-TRD WRITTEN             — invoke `/ums-sdlc spec-start SPEC-XX`
-   - Technical Requirements Document for this spec
-   - Lives in the service folder it primarily belongs to (sentinel/docs/specs/ or ui/docs/specs/)
-   - Covers: scope, approach, packages used, environment considerations, test plan
-   - Deviations during implementation logged in that service's CHANGELOG.md
+SPEC + TRD WRITTEN      — invoke `/ums-sdlc spec-start <feature-name>`
+   - A **feature folder** in `soul/docs/specs/` (kebab-case, no numbering — soul ADR-05) holding
+     `spec.md` (requirements + product approach) and `trd.md` (technical approach/decisions, no code).
+   - ≤100 readable lines each; over that → break the feature into subfeatures. Implementing service is a header field, not the location.
+   - Deviations during implementation logged in the implementing service's CHANGELOG.md
    ↓
 IMPLEMENTATION (fragmented PRs)
    - Each PR small, focused, independently verifiable
@@ -96,7 +97,21 @@ MVP target is the HFO Purifier area on the user's brother's ship. Do not propose
 Frontend (Next.js dashboard, planned Phase 4) lives in **ums-watchkeeper-ui** — a separate polyrepo sibling. Any change in **sentinel** that affects the WebSocket or REST contract **must** be flagged `[API-BREAKING]` in the sentinel CHANGELOG so the UI repo can be bumped in lockstep. The cross-service contract is documented in `CONTRACTS.md` here in soul.
 
 ### 5. Detection classes are an enum / Literal, never magic strings
-Currently the model is stock `yolo11n.pt` (COCO classes). When fine-tuned classes land (`oil_leak`, `smoke`, `normal`, optionally `motion`), they live as an `enum.Enum` or `typing.Literal` in sentinel — never as inline string comparisons.
+Currently the model is stock `yolo11n.pt` (COCO classes). When fine-tuned classes land (`oil`, `smoke`, `normal`, optionally `motion`), they live as an `enum.Enum` or `typing.Literal` in sentinel — never as inline string comparisons.
+
+---
+
+## Documentation & Process Conventions
+
+Standing conventions for **how we work** — distinct from the **Project Invariants** above (which are non-negotiable product safety/scope rules). This list is the **canonical index**: each entry is a one-line pointer; the linked ADR/skill holds the detail (kept there, not duplicated here, so it can't drift). **When a new convention is set, add a line here** so it stays discoverable from the always-loaded file.
+
+- **Workspace shape** — polyrepo under a parent dir; **soul = planning + cross-service context, services = implementation**. ([ADR-01](adr/0001-workspace-polyrepo.md), [ADR-04](adr/0004-adr-folder-and-spec-layout.md))
+- **SDLC rigor (Lite)** — a TRD is required when a feature starts, or architecture / a package / the cross-service contract changes; tiny PRs are exempt but still need a CHANGELOG entry + tests. ([ADR-02](adr/0002-lite-sdlc-rigor.md); §"SDLC — Lite" above)
+- **UI in a separate repo** — polyrepo sibling; contract changes flagged `[API-BREAKING]`. ([ADR-03](adr/0003-ui-separate-repo.md))
+- **ADRs** — one file per decision (`adr/NNNN-title.md`) + a `README.md` index; append-only, **supersede — don't edit**. ([ADR-04](adr/0004-adr-folder-and-spec-layout.md); `/ums-sdlc adr-new`)
+- **Specs** — **feature folders** (kebab-case, **no numbering**); `spec.md` (requirements + product approach) + `trd.md` (technical approach/decisions, **no code**); **≤100 readable lines** each; supporting artifacts alongside, named for their purpose. ([ADR-05](adr/0005-spec-convention.md); `/ums-sdlc spec-start`)
+- **CHANGELOGs** — append-only, newest on top, one entry per PR; cross-service → `soul/CHANGELOG.md`, service-internal → the service's own. (§"Golden Rules" above)
+- **Architecture docs reflect current state, not plans** — update *after* a change, never before. (§"Golden Rules" above)
 
 ---
 
@@ -132,7 +147,7 @@ Currently the model is stock `yolo11n.pt` (COCO classes). When fine-tuned classe
 | **sentinel** | `../ums-watchkeeper-sentinel/` | Python detection engine — observe (cameras + later read-only sensors), judge (alert state machine), alert (DB, WebSocket, Telegram). |
 | **ui** (future) | `../ums-watchkeeper-ui/` | Next.js dashboard — display live feed, alert history, confirm / false-positive feedback. |
 
-Each service has its own `CLAUDE.md`, `ARCHITECTURE.md`, `ADR.md`, `CHANGELOG.md`, and `DEPENDENCIES.md`, scoped to that service.
+Each service has its own `CLAUDE.md`, `ARCHITECTURE.md`, `adr/`, `CHANGELOG.md`, and `DEPENDENCIES.md`, scoped to that service.
 
 ---
 

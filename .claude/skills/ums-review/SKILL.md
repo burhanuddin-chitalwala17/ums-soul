@@ -38,7 +38,7 @@ For each violation, **block** the PR — these are non-negotiable per `soul/CLAU
 - Acceptable: literals in `sentinel/config/settings.py` itself, in `sentinel/tests/` (intentional fixtures), in docstrings.
 
 ### 1.3 Detection classes as enum / Literal
-- If the diff introduces or compares detection class names, the comparison must use an enum or `typing.Literal` — never a bare string equality (`if det.class_name == "oil_leak":`).
+- If the diff introduces or compares detection class names, the comparison must use an enum or `typing.Literal` — never a bare string equality (`if det.class_name == "oil":`).
 - Existing concession: `Detector.infer` returns `class_name: str` from Ultralytics; that's the boundary. The conversion to enum should happen at the first project-owned consumer.
 
 ### 1.4 MVP scope guard
@@ -90,8 +90,8 @@ Cross-check the diff against the docs. The choice of service-level vs soul-level
 | Changes how services connect (new contract field, new event type) | `soul/ARCHITECTURE.md` AND `soul/CONTRACTS.md` must be updated. |
 | Adds / removes / bumps a package | The service's `DEPENDENCIES.md` must reflect it. |
 | Surfaces a hardware/camera/GPU/RTSP/environment finding | `soul/HARDWARE_NOTES.md` must have a new dated entry. |
-| Makes a real service-internal architectural decision | The service's `ADR.md` must have a new entry (offer `/ums-sdlc adr-new`). |
-| Makes a real cross-service / workspace decision | `soul/ADR.md` must have a new entry. |
+| Makes a real service-internal architectural decision | The service's `adr/` must have a new ADR file + index row (offer `/ums-sdlc adr-new`). |
+| Makes a real cross-service / workspace decision | `soul/adr/` must have a new ADR file + index row. |
 | Implements a TRD | The TRD's `Status` field should be updated to `Implemented`. |
 | Anything | The relevant `CHANGELOG.md` must have a new top-line entry. |
 

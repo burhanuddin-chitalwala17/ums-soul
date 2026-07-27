@@ -18,7 +18,7 @@ ums-watchkeeper-master/        (parent dir, no git)
 └── ums-watchkeeper-ui/        ← Next.js dashboard (future)
 ```
 
-Each service folder is an independent git repo. See `ADR.md` ADR-01 for the workspace-shape decision.
+Each service folder is an independent git repo. See `adr/0001-workspace-polyrepo.md` for the workspace-shape decision.
 
 ---
 
@@ -82,7 +82,7 @@ The following are *not yet built* anywhere in the product. Listed here so they'r
 
 | Capability | Owner service | Phase |
 |------------|---------------|-------|
-| Fine-tuned model (`oil_leak`, `smoke`) | sentinel | 2 |
+| Fine-tuned model (`oil`, `smoke`) | sentinel | 2 |
 | Alert logic (threshold + persistence + cooldown per §6.3) | sentinel | 3 |
 | FastAPI service | sentinel | 3 |
 | PostgreSQL (`detection_events`, `camera_health`) | sentinel | 3 |

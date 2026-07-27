@@ -1,0 +1,21 @@
+# ADR-01: Workspace structure — polyrepo under a shared parent directory
+
+- **Date:** 2026-06-09
+- **Status:** Accepted
+- **Origin:** New decision recorded at the workspace split.
+- **Context:** The project is growing into at least two services (sentinel + ui). The original single `UMS-watch-keeper` repo conflated project-wide context (cross-service architecture, process rules) with Python-service implementation, leaving no natural home for cross-service ADRs and no obvious anchor point for the future UI repo to reference.
+- **Decision:** Adopt a **polyrepo under a shared parent directory** layout:
+  - `ums-watchkeeper-master/` is a parent directory only (no `.git`).
+  - `ums-watchkeeper-soul/` is an independent git repo containing project-wide context (this folder).
+  - Each service (`ums-watchkeeper-sentinel`, future `ums-watchkeeper-ui`, …) is its own independent git repo as a sibling under master.
+  - Skills live canonically in `soul/.claude/skills/` and are symlinked from each service's `.claude/skills`.
+- **Alternatives considered:**
+  - *Monorepo (single .git at master)* — simpler for solo dev, but conflates Python and Node toolchains, makes per-service CI awkward, and undermines the existing decision (now ADR-03) to keep the UI in a separate repo for focus.
+  - *Single repo with subfolders, no master* — what we had. Doesn't scale to multiple services; nowhere for cross-service docs to live with their own version history.
+  - *Hybrid where soul is a docs-only directory inside one of the service repos* — couples soul's lifecycle to that service's lifecycle, which is exactly what we're trying to avoid.
+- **Consequences:**
+  - ✅ Each service can iterate independently; clean GitHub repo boundaries.
+  - ✅ Cross-service decisions have a durable home (`soul/adr/`).
+  - ✅ The skill triad (`/ums-brainstorm`, `/ums-sdlc`, `/ums-review`) has a single canonical source, symlinked into each service.
+  - ⚠️ Cross-service changes touch multiple repos as one logical change — discipline lives in the `[API-BREAKING]` CHANGELOG flag and `CONTRACTS.md`.
+  - ⚠️ Symlinks are committed in the service repos; they break on Windows or if the relative layout changes. Solo Mac dev — acceptable for now.

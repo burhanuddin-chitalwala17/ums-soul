@@ -12,9 +12,9 @@ You are entering **R&D mode** for the ums-watchkeeper project. This skill runs *
 ```
 ums-watchkeeper-master/
 ├── ums-watchkeeper-soul/        ← project-wide context
-│   • CLAUDE.md, ARCHITECTURE.md, ADR.md, HARDWARE_NOTES.md, CONTRACTS.md, BACKLOG.md
+│   • CLAUDE.md, ARCHITECTURE.md, adr/, docs/specs/, HARDWARE_NOTES.md, CONTRACTS.md, BACKLOG.md
 ├── ums-watchkeeper-sentinel/    ← Python detection service
-│   • CLAUDE.md, ARCHITECTURE.md, ADR.md, DEPENDENCIES.md, TESTING.md, src/, config/, tests/
+│   • CLAUDE.md, ARCHITECTURE.md, adr/, DEPENDENCIES.md, TESTING.md, src/, config/, tests/
 └── ums-watchkeeper-ui/          ← Next.js dashboard (future, when scoped)
 ```
 
@@ -38,10 +38,10 @@ Read **before** researching. Pick the right docs based on scope:
 
 | If the topic is … | Read these |
 |-------------------|-----------|
-| Cross-service or workspace-level | `soul/ARCHITECTURE.md`, `soul/ADR.md`, `soul/CONTRACTS.md`, `soul/BACKLOG.md` |
-| Service-internal (e.g. sentinel inference, FastAPI routes) | The service's `ARCHITECTURE.md`, `ADR.md`, `DEPENDENCIES.md`, and the relevant `src/` modules |
+| Cross-service or workspace-level | `soul/ARCHITECTURE.md`, `soul/adr/`, `soul/CONTRACTS.md`, `soul/BACKLOG.md` |
+| Service-internal (e.g. sentinel inference, FastAPI routes) | The service's `ARCHITECTURE.md`, `adr/`, `DEPENDENCIES.md`, and the relevant `src/` modules |
 | Hardware / camera / GPU / engine-room environment | `soul/HARDWARE_NOTES.md` (always, since this file is project-wide) |
-| Package choice | `soul/ADR.md` AND the relevant service's `ADR.md` AND `DEPENDENCIES.md` |
+| Package choice | `soul/adr/` AND the relevant service's `adr/` AND `DEPENDENCIES.md` |
 
 State what you found before proposing anything new. This avoids reinventing or contradicting prior decisions.
 
@@ -66,11 +66,11 @@ The brainstorm must land somewhere durable. Pick the right one:
 | Output goes to | When |
 |----------------|------|
 | **`soul/HARDWARE_NOTES.md`** (new dated entry) | The finding is about hardware, camera, GPU, RTSP, or engine-room environment behavior. |
-| **A proposed new ADR-XX in `soul/ADR.md`** | A *cross-service* / *workspace-level* decision was made (workspace shape, process rigor, contract approach). |
-| **A proposed new ADR-XX in the relevant service's `ADR.md`** | A *service-internal* decision was made (package choice, internal pattern). |
+| **A proposed new ADR-XX file in `soul/adr/`** | A *cross-service* / *workspace-level* decision was made (workspace shape, process rigor, contract approach). |
+| **A proposed new ADR-XX file in the relevant service's `adr/`** | A *service-internal* decision was made (package choice, internal pattern). |
 | **A short note in the response only** | Pure exploration that didn't reach a decision; no durable artifact needed yet. |
 
-If proposing an ADR, write it in the standard format from the relevant `ADR.md` (Date / Status / Context / Decision / Alternatives / Consequences) and ask the user to confirm before you append. Set status to **Proposed** until they confirm — then **Accepted**.
+If proposing an ADR, write it in the standard format from the relevant `adr/README.md` (Date / Status / Context / Decision / Alternatives / Consequences) and ask the user to confirm before you add the file. Set status to **Proposed** until they confirm — then **Accepted**. (`/ums-sdlc adr-new` does the file creation + index-row update.)
 
 ### Step 6 — Handoff to TRD
 End the brainstorm with a one-liner: **"Next step: `/ums-sdlc spec-start SPEC-XX` to write the TRD using this brainstorm as the input."** (If the brainstorm concluded "we shouldn't do this," say that explicitly instead.)

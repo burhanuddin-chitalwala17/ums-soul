@@ -21,7 +21,11 @@ Living document for hardware-, camera-, GPU-, and engine-room–environmental qu
 
 ## GPU
 
-(no entries yet — populate during Phase 2 fine-tuning and Phase 5 sustained-inference testing)
+### 2026-06-10 — Phase 2a fine-tuning is a small job; train anywhere
+- yolo11n (nano) on ~100–150 labelled images is **minutes, not hours**. Training hardware is not a bottleneck at this scale — don't over-invest in it.
+- **Mac (Apple Silicon, `mps`):** fine for training this. The real caveat is MPS-backend *maturity*, not speed — some ops fall back to CPU (`PYTORCH_ENABLE_MPS_FALLBACK=1`) and numerics can differ from CUDA. **Mitigation: don't trust the loss curve — run the trained `best.pt` on a held-out real image and confirm it actually detects oil before believing the metrics.**
+- **No Helios 300 (cuda)?** Google **Colab free T4** is the cleanest path: real CUDA, zero setup, and you upload only the *labelled subset* (a few hundred MB), **not** the 1.8 GB raw set — Roboflow exports straight into the notebook. **Kaggle** (free T4/P100) is the backup. Pure CPU works as a last resort (tens of minutes). **Skip** hosted/rented GPU — unnecessary at this scale, and ADR-01 already rejected hosted Roboflow *inference* for the offline-demo requirement (training need not be offline, but the lock-in still buys nothing here).
+- Scope: this concerns *training* only. The 2026-05-03 note about `mps` falling back to CPU on some ops still stands for the live *inference* pipeline.
 
 Concerns to watch for, to be confirmed/refuted:
 - Laptop GPU thermal throttling during multi-hour inference (a real-world watch is 4 hours)
@@ -73,7 +77,7 @@ These are explicitly **not** in MVP scope per the project memory. Recorded here 
 ## Detection model behavior
 
 ### 2026-05-03 — Stock yolo11n.pt detects COCO classes only
-- `MODEL_WEIGHTS = "yolo11n.pt"` is the stock Ultralytics download — trained on COCO. It will detect `person`, `car`, `cell phone`, etc. — **not** `oil_leak` / `smoke`.
+- `MODEL_WEIGHTS = "yolo11n.pt"` is the stock Ultralytics download — trained on COCO. It will detect `person`, `car`, `cell phone`, etc. — **not** `oil` / `smoke`.
 - Phase 1 log output therefore reads as nonsense (e.g. `class=person` on factory footage). That is expected.
 - `CONFIDENCE_THRESHOLD` is currently **0.75**, tuned to suppress most stock-model noise. The MVP doc §6.3 production target of **0.65** applies only once the fine-tuned model lands in Phase 2.
 - When the fine-tuned model arrives, re-evaluate the threshold against the validation set — do not blindly carry 0.75 over.
